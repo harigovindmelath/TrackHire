@@ -1,5 +1,6 @@
 package com.trackhire.trackhire.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -33,6 +35,10 @@ public class User {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<JobApplication> jobApplications;
 
     // Constructors
     public User() {
