@@ -1,5 +1,6 @@
 package com.trackhire.trackhire.service;
 
+import com.trackhire.trackhire.dto.ConfirmApplicationRequest;
 import com.trackhire.trackhire.entity.JobApplication;
 import com.trackhire.trackhire.entity.Status;
 import com.trackhire.trackhire.entity.User;
@@ -43,6 +44,21 @@ public class JobApplicationService {
     }
     public List<JobApplication> getApplicationsForUser(Long userId){
         return jobApplicationRepository.findByUser_Id(userId);
+    }
+    public JobApplication createApplicationFromExtraction(ConfirmApplicationRequest request) {
+        User user = userRepository.findById(request.getUserId()).orElse(null);
+
+        JobApplication application = new JobApplication();
+        application.setUser(user);
+        application.setCompanyName(request.getCompanyName());
+        application.setRole(request.getRole());
+        application.setSkills(request.getSkills());
+        application.setLocation(request.getLocation());
+        application.setExperienceRequired(request.getExperienceRequired());
+        application.setJobDescriptionRaw(request.getJobDescriptionRaw());
+        application.setStatus(Status.SAVED);
+
+        return jobApplicationRepository.save(application);
     }
 
 }

@@ -1,5 +1,10 @@
 package com.trackhire.trackhire.controller;
 
+import com.trackhire.trackhire.client.ExtractedJobDetails;
+import com.trackhire.trackhire.client.GroqClient;
+import com.trackhire.trackhire.client.GroqResponseParser;
+import com.trackhire.trackhire.dto.ConfirmApplicationRequest;
+import com.trackhire.trackhire.dto.JobDescriptionRequest;
 import com.trackhire.trackhire.entity.JobApplication;
 import com.trackhire.trackhire.entity.Status;
 import com.trackhire.trackhire.service.JobApplicationService;
@@ -38,6 +43,21 @@ public class JobApplicationController {
     @GetMapping("/user/{userId}")
     public  List<JobApplication> getApplicationsForUser(@RequestParam Long userId){
         return jobApplicationService.getApplicationsForUser(userId);
+    }
+    @Autowired
+    private GroqClient groqClient;
+
+    @Autowired
+    private GroqResponseParser groqResponseParser;
+
+    @PostMapping("/parse")
+    public ExtractedJobDetails parseJobDescription(@RequestBody JobDescriptionRequest request) {
+        String rawContent = groqClient.extractJobDetails(request.getJobDescriptionText());
+        return groqResponseParser.parse(rawContent);
+    }
+    @PostMapping("/confirm")
+    public JobApplication confirmApplication(@RequestBody ConfirmApplicationRequest request) {
+        return jobApplicationService.createApplicationFromExtraction(request);
     }
 
 }
