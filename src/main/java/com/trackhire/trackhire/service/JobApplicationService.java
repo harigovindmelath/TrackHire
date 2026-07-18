@@ -4,6 +4,7 @@ import com.trackhire.trackhire.dto.ConfirmApplicationRequest;
 import com.trackhire.trackhire.entity.JobApplication;
 import com.trackhire.trackhire.entity.Status;
 import com.trackhire.trackhire.entity.User;
+import com.trackhire.trackhire.exception.ResourceNotFoundException;
 import com.trackhire.trackhire.repository.JobApplicationRepository;
 import com.trackhire.trackhire.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,18 @@ public class JobApplicationService {
 
 
     public JobApplication createApplication(Long userId, JobApplication application) {
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         application.setUser(user);
         application.setStatus(Status.SAVED);
         return jobApplicationRepository.save(application);
     }
     public JobApplication getApplicationById(Long id){
-        return jobApplicationRepository.findById(id).orElse(null);
+        return jobApplicationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("JobApplication not found with id: " + id));
     }
     public JobApplication updateStatus(Long id, Status newStatus){
-        JobApplication jobApplication = jobApplicationRepository.findById(id).orElse(null);
+        JobApplication jobApplication = jobApplicationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("JobApplication not found with id: " + id));
         jobApplication.setStatus(newStatus);
         return jobApplicationRepository.save(jobApplication);
     }
@@ -46,8 +49,8 @@ public class JobApplicationService {
         return jobApplicationRepository.findByUser_Id(userId);
     }
     public JobApplication createApplicationFromExtraction(ConfirmApplicationRequest request) {
-        User user = userRepository.findById(request.getUserId()).orElse(null);
-
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + request.getUserId()));
         JobApplication application = new JobApplication();
         application.setUser(user);
         application.setCompanyName(request.getCompanyName());

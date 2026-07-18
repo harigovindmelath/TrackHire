@@ -1,6 +1,7 @@
 package com.trackhire.trackhire.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trackhire.trackhire.exception.GroqServiceException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,7 +18,8 @@ public class GroqResponseParser {
             }
             return objectMapper.readValue(cleaned, ExtractedJobDetails.class);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse Groq response: " + e.getMessage());
+        throw new GroqServiceException("Failed to parse Groq response: " + e.getMessage());
+
         }
     }
 }
