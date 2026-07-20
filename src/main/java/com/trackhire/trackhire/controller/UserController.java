@@ -1,5 +1,7 @@
 package com.trackhire.trackhire.controller;
 
+import com.trackhire.trackhire.dto.LoginRequest;
+import com.trackhire.trackhire.dto.LoginResponse;
 import com.trackhire.trackhire.entity.User;
 import com.trackhire.trackhire.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,5 +22,9 @@ public class UserController {
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
         return userService.getUserById(id);
+    }
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LoginRequest request) {
+        return userService.loginUser(request);
     }
 }

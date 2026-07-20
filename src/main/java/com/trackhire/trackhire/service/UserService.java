@@ -1,10 +1,15 @@
 package com.trackhire.trackhire.service;
 
+import com.trackhire.trackhire.dto.LoginRequest;
+import com.trackhire.trackhire.dto.LoginResponse;
 import com.trackhire.trackhire.entity.User;
 import com.trackhire.trackhire.exception.DuplicateResourceException;
+import com.trackhire.trackhire.exception.InvalidCredentialsException;
 import com.trackhire.trackhire.exception.ResourceNotFoundException;
 import com.trackhire.trackhire.repository.UserRepository;
+import com.trackhire.trackhire.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,7 +20,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    // TODO: replace with a custom DuplicateEmailException once exception handling is added
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public User registerUser(User user) {
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
 
@@ -23,11 +30,33 @@ public class UserService {
             throw new DuplicateResourceException("Email already registered: " + user.getEmail());
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    // TODO: replace null return with a custom NotFoundException once exception handling is added
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+    }
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public LoginResponse loginUser(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(token);
+        response.setUserId(user.getId());
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+
+        return response;
     }
 }
