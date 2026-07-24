@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ConfirmApplicationRequest {
-    private Long userId;
     private String companyName;
     private String role;
     private String skills;
