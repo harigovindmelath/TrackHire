@@ -1,4 +1,6 @@
 # TrackHire
+🔗 **Live API:** https://trackhire-production-770a.up.railway.app
+_Note: hosted on a free tier — the first request after inactivity may take 30-60s to wake up._
 
 A backend API for tracking job applications through their full lifecycle — from a pasted job description to offer. Built to solve a real problem: keeping dozens of job applications organized during an active job search, instead of scattered across emails and spreadsheets.
 
