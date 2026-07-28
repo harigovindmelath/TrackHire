@@ -1,6 +1,7 @@
 # TrackHire
+
 🔗 **Live API:** https://trackhire-production-770a.up.railway.app
-_Note: hosted on a free tier — the first request after inactivity may take 30-60s to wake up._
+_Hosted on a free tier — the first request after a period of inactivity may take 30-60s to wake up._
 
 A backend API for tracking job applications through their full lifecycle — from a pasted job description to offer. Built to solve a real problem: keeping dozens of job applications organized during an active job search, instead of scattered across emails and spreadsheets.
 
@@ -19,6 +20,7 @@ A backend API for tracking job applications through their full lifecycle — fro
 - **Spring Security, JWT (jjwt)** — stateless, token-based authentication
 - **Groq API** — LLM-powered job description parsing
 - **Lombok** — boilerplate reduction
+- **Docker, Railway** — deployment
 
 ## Architecture
 
@@ -60,7 +62,15 @@ _All endpoints below require a valid JWT (`Authorization: Bearer <token>`)._
 | POST | `/api/applications/parse` | Paste JD text, get back extracted fields (not saved yet) |
 | POST | `/api/applications/confirm` | Save the (reviewed/edited) extracted fields as a new application |
 
-## Setup
+## Try it live
+
+No setup needed — hit the live API directly with a tool like Postman:
+
+1. `POST https://trackhire-production-770a.up.railway.app/api/users/register`
+2. `POST https://trackhire-production-770a.up.railway.app/api/users/login` → copy the returned token
+3. Use `Authorization: Bearer <token>` on any `/api/applications/*` request
+
+## Local setup
 
 ### Prerequisites
 - Java 17+
@@ -71,7 +81,7 @@ _All endpoints below require a valid JWT (`Authorization: Bearer <token>`)._
 
 1. Clone the repo
    ```
-   git clone https://github.com/<yourusername>/trackhire.git
+   git clone https://github.com/harigovindmelath/TrackHire.git
    ```
 2. Create the database
    ```sql
